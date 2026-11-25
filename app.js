@@ -23,7 +23,7 @@
   // ---------- Local state ----------
   const store = {
     get(key) { try { return new Set(JSON.parse(localStorage.getItem(key) || "[]")); } catch { return new Set(); } },
-    set(key, set) { localStorage.setItem(key, JSON.stringify([...set])); },
+    set(key, set) { try { localStorage.setItem(key, JSON.stringify([...set])); } catch {} },
   };
   let saved = store.get("persona.saved");
   let follows = store.get("persona.follows");
