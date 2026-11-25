@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Persona — 3-hour build plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calm product spec, same black-and-white voice as the app itself
+   IDEA: an engineer's whiteboard, cleaned up: three columns, labelled arrows
+   PICTURE: the system diagram, boxes shaded by how hard they are
+   COLOUR and TYPE: white and ink only, shading carries difficulty; Instrument Serif + Inter
+   LAYOUT: title, diagram, time bar, then the short lists */
+:root{color-scheme:light dark;--bg:light-dark(#fff,#0d0d0d);--ink:light-dark(#0a0a0a,#f2f2f2);--ink2:light-dark(#5f5f5f,#a8a8a8);--soft:light-dark(#f1f1f1,#1d1d1d);--line:light-dark(#e4e4e4,#2a2a2a)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:clamp(24px,4vw,56px) max(4vw,16px) 64px}
+h1{font:400 clamp(36px,5vw,52px)/1.05 "Instrument Serif",Georgia,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+h1 em{color:var(--ink2)}
+h2{font:400 32px/1.05 "Instrument Serif",Georgia,serif;margin:0 0 14px}
+.lede{color:var(--ink2);max-width:62ch;margin:12px 0 0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:26px 0 10px;font-size:13px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:22px;height:14px;border-radius:4px;border:1.5px solid var(--ink)}
+.sw.done{border-style:dashed;border-color:var(--ink2)}.sw.med{background:var(--soft)}.sw.heavy{background:var(--ink)}
+figure{margin:0}
+.diagram{overflow-x:auto;border:1px solid var(--line);border-radius:20px;padding:12px}
+.diagram svg{display:block;width:100%;min-width:860px;height:auto;color:var(--ink)}
+figcaption{font-size:14px;color:var(--ink2);margin-top:10px}
+svg text{font-family:Inter,system-ui,sans-serif;fill:currentColor}
+svg .col{font-size:12px;font-weight:600;letter-spacing:.02em;fill:var(--ink2)}
+svg .t{font-size:14px;font-weight:600}
+svg .s{font-size:11.5px;fill:var(--ink2)}
+svg .tag{font-size:11px;font-weight:600}
+svg .lbl{font-size:11px;fill:var(--ink2)}
+svg .box{fill:var(--bg);stroke:currentColor;stroke-width:1.5}
+svg .done{fill:var(--bg);stroke:var(--ink2);stroke-dasharray:5 4}
+svg .med{fill:var(--soft);stroke:currentColor;stroke-width:1.5}
+svg .heavy{fill:currentColor}
+svg .heavy-t{fill:var(--bg)}
+svg .heavy-s{fill:var(--bg);opacity:.75}
+svg .ar{stroke:currentColor;stroke-width:1.4;fill:none}
+.bar{display:flex;height:56px;border-radius:14px;overflow:hidden;border:1.5px solid var(--ink);margin-top:6px}
+.bar div{display:flex;flex-direction:column;justify-content:center;padding:0 8px;border-right:1px solid var(--line);font-size:12px;line-height:1.25;white-space:nowrap;overflow:hidden}
+.bar div:last-child{border-right:0}
+.bar b{font-weight:600}.bar small{color:var(--ink2)}
+.bar .heavy{background:var(--ink);color:var(--bg)}.bar .heavy small{color:var(--bg);opacity:.7}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:48px}
+.grid section{border-top:2px solid var(--ink);padding-top:16px}
+ul{margin:0;padding-left:18px}li{margin:6px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td:first-child{font-weight:600;width:34%;padding-right:10px}
+code{font-size:13px;background:var(--soft);padding:1px 5px;border-radius:5px;overflow-wrap:anywhere}
+.time{margin-top:48px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.bar{height:auto;flex-wrap:wrap}.bar div{flex:1 1 30% !important;padding:8px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Persona: what's left to build, <em>in three hours</em></h1>
+  <p class="lede">The public site is done. What's left is the private Creator Studio and a backend behind it. Supabase gives us login, database and image storage in one service, so we don't write a server.</p>
+
+  <div class="legend" aria-label="Legend">
+    <span><i class="sw done"></i>Done</span>
+    <span><i class="sw"></i>Easy</span>
+    <span><i class="sw med"></i>Medium</span>
+    <span><i class="sw heavy"></i>Heavy</span>
+  </div>
+
+  <figure class="diagram">
+    <svg viewBox="0 0 1120 470" role="img" aria-label="Creators log in to a private studio, edit their characters and brands, upload images and pick which go live. Supabase stores accounts, data and image files. The public site shows only live images.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+      </defs>
+
+      <text class="col" x="20" y="34">CREATOR STUDIO · private</text>
+      <text class="col" x="420" y="34">BACKEND · Supabase</text>
+      <text class="col" x="800" y="34">PUBLIC SITE · anyone</text>
+
+      <!-- Column 1: Studio -->
+      <rect class="box" x="20" y="50" width="300" height="62" rx="12"/>
+      <text class="t" x="38" y="77">1 · Log in</text><text class="s" x="38" y="97">email magic link</text>
+      <text class="tag" x="302" y="77" text-anchor="end">15m</text>
+
+      <rect class="box" x="20" y="130" width="300" height="62" rx="12"/>
+      <text class="t" x="38" y="157">2 · My characters &amp; brands</text><text class="s" x="38" y="177">list + “New” button</text>
+      <text class="tag" x="302" y="157" text-anchor="end">20m</text>
+
+      <rect class="box" x="20" y="210" width="300" height="62" rx="12"/>
+      <text class="t" x="38" y="237">3 · Edit profile</text><text class="s" x="38" y="257">name, handle, bio, type, avatar</text>
+      <text class="tag" x="302" y="237" text-anchor="end">20m</text>
+
+      <rect class="med" x="20" y="290" width="300" height="62" rx="12"/>
+      <text class="t" x="38" y="317">4 · Pick what goes live</text><text class="s" x="38" y="337">toggle per image, set order</text>
+      <text class="tag" x="302" y="317" text-anchor="end">15m</text>
+
+      <rect class="heavy" x="20" y="370" width="300" height="62" rx="12"/>
+      <text class="t heavy-t" x="38" y="397">5 · Upload images</text><text class="s heavy-s" x="38" y="417">drag &amp; drop, resize in browser</text>
+      <text class="tag heavy-t" x="302" y="397" text-anchor="end">45m</text>
+
+      <!-- Column 2: Backend -->
+      <rect class="box" x="420" y="50" width="280" height="62" rx="12"/>
+      <text class="t" x="438" y="77">Auth</text><text class="s" x="438" y="97">one account per creator</text>
+
+      <rect class="box" x="420" y="130" width="280" height="222" rx="12"/>
+      <text class="t" x="438" y="157">Database</text>
+      <text class="s" x="438" y="185">creators</text>
+      <text class="s" x="438" y="207">personas · character | brand</text>
+      <text class="s" x="438" y="229">images · is_live, position</text>
+      <line x1="438" x2="682" y1="252" y2="252" stroke="var(--line)"/>
+      <text class="s" x="438" y="276">row rules: creators edit only</text>
+      <text class="s" x="438" y="294">their own rows; public reads</text>
+      <text class="s" x="438" y="312">only published + live</text>
+
+      <rect class="heavy" x="420" y="370" width="280" height="62" rx="12"/>
+      <text class="t heavy-t" x="438" y="397">Image storage + CDN</text><text class="s heavy-s" x="438" y="417">public bucket, one file per image</text>
+
+      <text class="tag" x="560" y="456" text-anchor="middle">setup all three · 30m</text>
+
+      <!-- Column 3: Public -->
+      <rect class="done" x="800" y="50" width="300" height="62" rx="12"/>
+      <text class="t" x="818" y="77">Home feed</text><text class="s" x="818" y="97">masonry, filters, search</text>
+      <text class="tag" x="1082" y="77" text-anchor="end">done</text>
+
+      <rect class="done" x="800" y="130" width="300" height="62" rx="12"/>
+      <text class="t" x="818" y="157">Character / brand profile</text><text class="s" x="818" y="177">public page per persona</text>
+      <text class="tag" x="1082" y="157" text-anchor="end">done</text>
+
+      <rect class="done" x="800" y="210" width="300" height="62" rx="12"/>
+      <text class="t" x="818" y="237">Pin page</text><text class="s" x="818" y="257">big image + more like this</text>
+      <text class="tag" x="1082" y="237" text-anchor="end">done</text>
+
+      <rect class="med" x="800" y="290" width="300" height="62" rx="12"/>
+      <text class="t" x="818" y="317">Read from DB, not data.js</text><text class="s" x="818" y="337">one query swaps the mock data</text>
+      <text class="tag" x="1082" y="317" text-anchor="end">20m</text>
+
+      <rect class="box" x="800" y="370" width="300" height="62" rx="12"/>
+      <text class="t" x="818" y="397">Deploy + seed 3 personas</text><text class="s" x="818" y="417">GitHub Pages, already wired</text>
+      <text class="tag" x="1082" y="397" text-anchor="end">15m</text>
+
+      <!-- Arrows studio -> backend -->
+      <line class="ar" x1="320" y1="81" x2="418" y2="81" marker-end="url(#a)"/><text class="lbl" x="369" y="73" text-anchor="middle">signs in</text>
+      <line class="ar" x1="320" y1="161" x2="418" y2="161" marker-end="url(#a)"/><text class="lbl" x="369" y="153" text-anchor="middle">create / list</text>
+      <line class="ar" x1="320" y1="241" x2="418" y2="241" marker-end="url(#a)"/><text class="lbl" x="369" y="233" text-anchor="middle">saves</text>
+      <line class="ar" x1="320" y1="321" x2="418" y2="321" marker-end="url(#a)"/><text class="lbl" x="369" y="313" text-anchor="middle">is_live = true</text>
+      <line class="ar" x1="320" y1="401" x2="418" y2="401" marker-end="url(#a)"/><text class="lbl" x="369" y="393" text-anchor="middle">file</text>
+      <line class="ar" x1="560" y1="370" x2="560" y2="354" marker-end="url(#a)"/><text class="lbl" x="568" y="365">+ image row</text>
+
+      <!-- Arrows backend -> public -->
+      <line class="ar" x1="700" y1="321" x2="798" y2="321" marker-end="url(#a)"/><text class="lbl" x="749" y="313" text-anchor="middle">live only</text>
+      <polyline class="ar" points="700,401 750,401 750,345 798,345" marker-end="url(#a)"/><text class="lbl" x="703" y="420">image URLs</text>
+      <polyline class="ar" points="950,290 950,272" marker-end="url(#a)"/><text class="lbl" x="958" y="285">feeds all three pages</text>
+    </svg>
+    <figcaption>Creators work on the left, Supabase sits in the middle, the public reads on the right. The two solid boxes are the image path, the heavy part: upload and storage.</figcaption>
+  </figure>
+
+  <section class="time">
+    <h2>The three hours</h2>
+    <div class="bar" aria-label="Time plan, 180 minutes">
+      <div style="flex:30"><b>Supabase setup</b><small>30m</small></div>
+      <div style="flex:15"><b>Log in</b><small>15m</small></div>
+      <div style="flex:20"><b>My personas</b><small>20m</small></div>
+      <div style="flex:20"><b>Edit profile</b><small>20m</small></div>
+      <div class="heavy" style="flex:45"><b>Upload images</b><small>45m</small></div>
+      <div style="flex:15"><b>Go live</b><small>15m</small></div>
+      <div style="flex:20"><b>Read DB</b><small>20m</small></div>
+      <div style="flex:15"><b>Deploy</b><small>15m</small></div>
+    </div>
+    <div class="ticks"><span>0:00</span><span>1:00</span><span>2:00</span><span>3:00</span></div>
+  </section>
+
+  <div class="grid">
+    <section>
+      <h2>Keeping images light</h2>
+      <ul>
+        <li>Shrink in the browser before upload: longest side 1600px, WebP. No server resizing.</li>
+        <li>One public bucket, one folder per persona: <code>persona-id/image-id.webp</code>.</li>
+        <li>Store width and height in the row so the grid lays out before images load.</li>
+        <li>Creators bring their own AI images. No generation inside the app yet.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>Three tables</h2>
+      <table>
+        <tr><td>creators</td><td>id, name, handle</td></tr>
+        <tr><td>personas</td><td>id, creator_id, kind (character | brand), name, handle, bio, avatar, published</td></tr>
+        <tr><td>images</td><td>id, persona_id, path, w, h, title, is_live, position</td></tr>
+      </table>
+    </section>
+    <section>
+      <h2>Not in the three hours</h2>
+      <ul>
+        <li>AI image generation</li>
+        <li>Real follows, saves and comments (stay in the browser)</li>
+        <li>Teams: one creator per account</li>
+        <li>Moderation, reporting, analytics</li>
+        <li>Payments and brand deals</li>
+      </ul>
+    </section>
+  </div>
+</div>
+</body>
+</html>
